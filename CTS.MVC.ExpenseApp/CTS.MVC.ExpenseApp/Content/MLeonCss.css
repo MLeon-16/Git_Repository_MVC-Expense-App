@@ -1,0 +1,122 @@
+﻿body {
+}
+
+
+/*body > div /*--- had to change this one because of a conflict with the date picker 
+{
+    width:76%;
+    margin:0 auto;
+    box-shadow: 0px 30px 50px;
+    padding:20px;
+    
+}*/
+
+.bodyDiv 
+{
+    width:76%;
+    margin:0 auto;
+    box-shadow: 0px 30px 50px;
+    padding:20px;
+    
+}
+
+
+input[type="text"] 
+{ 
+    padding: 13px; 
+}
+
+.lableWidth
+{
+    width:100px;
+    
+}
+
+.BarColor 
+{
+    background-color:#F5F5F5;
+    color:#F5F5F5;
+   
+}
+a:hover 
+{
+    cursor:pointer;
+
+}
+
+.centerContent /*this class will not work for tables*/ 
+{
+     text-align: center;
+     margin-left: auto;   
+     margin-right: auto;  
+     padding:7px;
+     float:none;
+    
+    
+}
+
+.centerTable /*This class was needed becuase the Tables properties did not work with centerContentClass*/ 
+{
+    width:auto;
+    margin-left:auto; 
+    margin-right:auto;
+    text-align: center;
+    float:none;
+    
+}
+
+thead
+{
+  text-align: center;
+}
+th {
+  text-align: center;
+}
+  
+.wellMLeon {
+  min-height: 20px;
+  padding: 19px;
+  margin-bottom: 20px;
+  background-color: #EEEEEE;
+  border: 1px solid #e3e3e3;
+  -webkit-border-radius: 4px;
+     -moz-border-radius: 4px;
+          border-radius: 4px;
+  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05);
+     -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05);
+          box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05);
+}
+
+
+input[type=text]:focus /*this will change the color of the text box when it is clicked into*/
+{
+  border:1px solid #0C8DCE !important; /*importtant will override any previowus scc rules*/
+    background-color:ActiveBorder !important;
+    color:red;
+}
+
+.errorBox 
+{
+ 
+    background-color:#E7473E!important;
+}
+
+.Bold {
+    font-weight:bold;
+    text-decoration:underline;
+}
+
+.lbl80 {
+width:30%;
+font-weight:bold;
+
+}
+ .lbltd {
+  overflow: hidden;
+ white-space: nowrap;
+}
+.field-validation-error {
+    color:red;
+    font-weight:bold;
+    text-decoration:underline;
+}

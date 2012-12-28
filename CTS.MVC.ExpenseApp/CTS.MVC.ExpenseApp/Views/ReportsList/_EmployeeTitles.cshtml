@@ -1,0 +1,43 @@
+﻿@model CTS.MVC.ExpenseApp.Models.ReportViewModel 
+@{
+        List<string> empTitleList =  new List<string>();
+        empTitleList.Add("N/A");
+        empTitleList.Add("Analyst-1");
+        empTitleList.Add("Analyst-2");
+        empTitleList.Add("Consultant-1");
+        empTitleList.Add("Consultant-2");
+        empTitleList.Add("Senior Consultant-1");
+        empTitleList.Add("Senior Consultant-2");
+        empTitleList.Add("Other");
+
+        SelectList empSelectList = new SelectList(empTitleList);
+
+        List<KeyValuePair<int, string>> titleDDL = new List<KeyValuePair<int, string>>();
+        titleDDL.Add(new KeyValuePair<int, string>(0, "N/A"));
+        titleDDL.Add(new KeyValuePair<int, string>(1, "King"));
+        titleDDL.Add(new KeyValuePair<int, string>(3, "Analyst-1"));
+        titleDDL.Add(new KeyValuePair<int, string>(4, "Analyst-2"));
+        titleDDL.Add(new KeyValuePair<int, string>(5, "Consultant-1"));
+        titleDDL.Add(new KeyValuePair<int, string>(6, "Consultant-2"));
+        titleDDL.Add(new KeyValuePair<int, string>(7, "Senior Consultant-1"));
+        titleDDL.Add(new KeyValuePair<int, string>(8, "Senior Consultant-2"));
+        titleDDL.Add(new KeyValuePair<int, string>(9, "Other"));
+        SelectList mySelectList = new SelectList(titleDDL, "key", "value", 0);
+        
+     }
+<label>Employee Title :</label>
+
+                @Html.DropDownListFor(model => model.EmpTitleInput,empSelectList,"     --- Select a Title----")
+
+
+@*<select data-val="true" data-val-length="The field EmpTitleInput must be a string with a maximum length of 50." data-val-length-max="50" data-val-required="The EmpTitleInput field is required." id="EmpTitleInput" name="EmpTitleInput">
+<option selected="selected" value="0">N/A</option>
+<option value="1">King</option>
+<option value="3">Analyst-1</option>
+<option value="4">Analyst-2</option>
+<option value="5">Consultant-1</option>
+<option value="6">Consultant-2</option>
+<option value="7">Senior Consultant-1</option>
+<option value="8">Senior Consultant-2</option>
+<option value="9">Other</option>
+</select>*@

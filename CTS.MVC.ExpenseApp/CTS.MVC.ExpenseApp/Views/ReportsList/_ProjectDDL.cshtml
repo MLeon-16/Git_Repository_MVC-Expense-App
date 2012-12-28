@@ -1,0 +1,23 @@
+﻿@model CTS.MVC.ExpenseApp.Models.ReportViewModel
+
+<table >
+    <tr>
+        <td><label>Client :</label></td>
+        <td>
+            
+
+    @Html.DropDownListFor(m => m.SelectedClientID, new SelectList(Model.Clients, "ClientID", "ClientName"), "     --- Select a Client----", new { onchange = "loadProjects()", id = "ddlClient" }) &nbsp;
+    
+        </td>
+        <td><label>Project :</label></td>
+        <td>
+
+    
+    @Html.DropDownListFor(m => m.SelectedProjectID, new SelectList(Model.Projects, "ProjectID", "ProjectName"), "--- Select a Project---", new { id = "ddlProject" }) 
+  
+
+        </td>
+    </tr>
+</table>
+    
+

@@ -1,0 +1,384 @@
+﻿@model CTS.MVC.ExpenseApp.Models.ExpenseDetailsViewModel
+
+@{
+    ViewBag.Title = "Index";
+}
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}
+
+@*these are the links for the BS date picker, JS date picker had a conflict with the CSS*@
+<link href="~/Content/datepicker.css" rel="stylesheet" />
+<script src="~/Scripts/bootstrap-datepicker.js"></script>
+<script type="text/javascript">
+    $(function () {
+        //$('#ExpenseInput_DateIncurred').datepicker(); // this will make the date picker be toggled with a Text box 
+        $('#txtDatepicker2').datepicker() // this makes the date picker to be toggled with the button 
+    });
+
+</script>
+
+<h2>Expense Report</h2>
+<div class="row span10">
+    <table border="0" class="lbltd" width="40%">
+
+
+        <tr>
+            <td style="width: 25%">
+                <strong>Employee Name :</strong>
+            </td>
+            <td>@Model.Report.EmpName</td>
+            <td style="width: 15%"><strong>Title :</strong>
+            </td>
+            <td>@Model.Report.EmpTitle</td>
+        </tr>
+        <tr>
+            <td><strong>Month/Year :</strong>
+            </td>
+            <td>@Model.Report.MonthYear.ToString("MMM/yyyy")</td>
+            <td><strong>Billable :</strong>
+            </td>
+            <td>@{if (Model.Report.Billable == true)
+                  {
+                <span class="icon-thumbs-up"></span>
+                  }
+                  else
+                  {
+                <span class=" icon-thumbs-down"></span>
+                  }
+           
+            }</td>
+        </tr>
+        <tr>
+            <td><strong>Client Name :</strong>
+            </td>
+            <td>@Model.Report.ClientName</td>
+            <td><strong>Project :</strong>
+            </td>
+            <td>@Model.Report.ProjectName</td>
+        </tr>
+        
+    </table>
+</div>
+
+
+
+
+    <div id="expenseDiv">
+        @{Html.RenderPartial("_ExpenseDetails", Model);}
+    </div> 
+          
+        
+
+
+
+
+<script type="text/javascript">
+
+
+
+
+
+
+    var reportID = '@ViewContext.RouteData.Values["reportID"]';// this is used to get a parameter from the URL 
+    $('#ExpenseInput_ReportID').val(reportID)
+
+    function saveExpense() {
+        alert("save")
+        
+    };
+    function showModal() {
+        $('#myModal').modal('show')
+        // check to see if it is an ADD or Edit 
+
+        // ------------------------------This is an edit of an Expense : 
+
+        //--------------------------------------- this is a new Expense :
+
+        // need to get todays date since if the form is sumbited without a date 
+        // the Datepicker display in an unwanted area and will not be able to remove 
+        var today = new Date();
+        var dd = today.getDate();
+        var mm = today.getMonth() + 1; //January is 0!
+
+        var yyyy = today.getFullYear();
+        if (dd < 10) { dd = '0' + dd } if (mm < 10) { mm = '0' + mm } today = mm + '-' + dd + '-' + yyyy;
+        $('#ExpenseInput_DateIncurred').val(today)
+
+
+    }
+
+
+    $('#ExpenseInput_Amount').blur(function () { // blur is the event when the focus of the elemet is lost 
+
+        getAmountPerGuest();
+    });
+    $('#ExpenseInput_NumberOfGuest').blur(function () {
+
+        getAmountPerGuest();
+    });
+
+    function getAmountPerGuest() {
+        // get the amount of the expesnse 
+        var expenseAmount = $('#ExpenseInput_Amount').val()
+        // get the number of guest 
+        var numberOfGuest = $('#ExpenseInput_NumberOfGuest').val()
+
+        // check for null or bad entries if 1 or 0 guest just return the whole amount 
+
+        var txtAmountClass = $('#ExpenseInput_Amount').attr("class")
+        // this vaule is used to see if the text box is valid it the value = "span2" means that it is valid 
+        // if the value = "span2 input-validation-error" means that it does not meet the correct form regarding the data annotations 
+
+        if (txtAmountClass == "span2" || txtAmountClass == "span2 valid") {
+            if (numberOfGuest == 0 || numberOfGuest == 1) {
+                $("#ExpenseInput_AmountPerPerson").val(expenseAmount);
+                $('#ExpenseInput_Amount').val($('#ExpenseInput_Amount').val().toFixed(2))
+
+            }
+            else {
+                var amountPerPerson = (expenseAmount / numberOfGuest);
+                $("#ExpenseInput_AmountPerPerson").val(amountPerPerson.toFixed(2));// note toFixed is used to round the value of the int 
+                $('#ExpenseInput_Amount').val($('#ExpenseInput_Amount').val().toFixed(2))
+            }
+
+
+        }
+        else {
+
+        }
+    };
+
+    // used for retrieving query string values
+    function getParameterByName(name) {
+        name = name.replace(/[\[]/, "\\\[").replace(/[\]]/, "\\\]");
+        var regexS = "[\\?&]" + name + "=([^&#]*)";
+        var regex = new RegExp(regexS);
+        var results = regex.exec(window.location.search);
+        if (results == null)
+            return "";
+        else
+            return decodeURIComponent(results[1].replace(/\+/g, " "));
+    }
+
+
+
+</script>
+
+
+
+@*<input class="span2 input-validation-error" data-val="true" data-val-number="The field Expense Amount must be a number." data-val-regex="Must be a valid monetary expression eg-19.95" data-val-regex-pattern="(^\d+[.]\d{1,2})|(^\d+)" data-val-required="The Expense Amount field is required." id="ExpenseInput_Amount" name="ExpenseInput.Amount" type="text" value="">
+<input class="span2 valid" data-val="true" data-val-number="The field Expense Amount must be a number." data-val-regex="Must be a valid monetary expression eg-19.95" data-val-regex-pattern="(^\d+[.]\d{1,2})|(^\d+)" data-val-required="The Expense Amount field is required." id="ExpenseInput_Amount" name="ExpenseInput.Amount" type="text" value="">*@
+
+@*Scripts for Establishment TEXT box ------------------- Start*@ 
+<script type="text/javascript">
+
+    function loadEstAutoComplete (){
+        // here we will load the list of the Establishments to set up for auto complete
+        var estArray = new Array();
+    
+   
+        var establishmentCount = @Model.Establishments.Count
+       
+        var est = @Html.Raw(Json.Encode(Model.Establishments))// change data from model object in to Json 
+    
+            for (var i = 0; i < establishmentCount ; i++){
+    
+                estArray[i] = est[i].EstablishmentName
+                //alert( est[i].EstablishmentName)
+            }
+        // $('#search').typeahead({ source: subjects })
+        $('#ExpenseInput_Establishment').typeahead({
+            source:estArray
+        });
+    }
+    loadEstAutoComplete()
+
+    
+</script>
+<script type="text/javascript">
+    $('#ExpenseInput_NumberOfGuest').val(0);// on load depending what number of guest is doing 
+    function addEstablishment()
+    {
+        // get text from EST text box and trim it :
+        var establishmentName = $('#ExpenseInput_Establishment').val().trim()
+        // now we check to see if it has a value  empty 
+        if(establishmentName.length <= 0)
+        {
+        
+        }
+        else
+        {
+            saveEstablishment(establishmentName);
+        }
+        
+
+    }
+   
+    //function to add edit est makes a post to server 
+    function saveEstablishment(establishmentName) {
+
+        // first we need to get an array of the establishments
+        var estArray = new Array();
+        var UniqueName = true
+
+        var establishmentCount = @Model.Establishments.Count
+        var est = @Html.Raw(Json.Encode(Model.Establishments))// change data from model object in to Json 
+    
+        for (var i = 0; i < establishmentCount ; i++){
+    
+            // convert all to CAPS letters 
+            // check each item to see if that establishment already exist
+            estArray[i] = est[i].EstablishmentName.toUpperCase()
+
+            if( estArray[i] == establishmentName.toUpperCase())
+            {
+                UniqueName = false
+           
+            }
+        
+         
+        }
+
+        if(UniqueName == true){
+   
+            // then add if it is a new establishemnt 
+
+            $.ajax(
+             {
+                 type: "POST",
+                 url: '@Url.Action("AddEstablishment", "Report")',
+                 data: { establishmentName: establishmentName },
+                 success: function (data) {
+                     // replace the table content with the partialview
+                     $('#establishmentTxtWrapper').html(data);
+                     loadEstAutoComplete();
+                     $('#ExpenseInput_Establishment').val(establishmentName);
+                     alert(establishmentName +", Has been added to Common Establishemnts.")   
+                
+
+                 },
+                 error: function (xhr, status, error) {// here the Ajax post was unsccuessful
+
+                     // DisplayError(xhr); /// this method will extract the custom error message thrown by server
+                 }
+             });
+         }
+         else{
+             alert(establishmentName +", Already Exist!!")  
+         }
+     }
+
+</script>
+@*Scripts for Establishment TEXT box -----------------------End*@
+
+@*Scripts for Delete Expense -----------------------Start*@
+<script type="text/javascript">
+    // click event for delete client 
+    $('body').on('click', '[id^=linkDeleteExpense]', function (event) {
+
+
+        var selectedExpenseID = $(this).attr('data-expenseID');
+        var reportID = $(this).attr('data-reportID');
+        var confirmDelete = window.confirm("Remove: Selected Expense\n\n" +
+            "                 do you wish to continue ? ");
+        if (confirmDelete) {
+            // post to server and remove the Client
+            delelteExpense(selectedExpenseID, reportID);
+        }
+        else {
+            $('#lblStatus').text("delete has been canceled");
+        }
+
+    });
+
+    function delelteExpense(selectedExpenseID, reportID) {
+        $.ajax(
+              {
+                  type: "POST",
+                  url: '@Url.Action("DeleteExpense", "Report")',
+                  data: { expenseID: selectedExpenseID, reportID: reportID },
+                  success: function (data) {
+                      // replace the table content with the partialview
+                      $('#expenseDiv').html(data);
+                      $('#lblStatus').text( "Expense has been removed from report");
+                      //rebindLinks();
+                  },
+                  error: function (xhr, status, error) {// here the Ajax post was unsccuessful
+                      alert("Something broke server-side")
+                      // DisplayError(xhr); /// this method will extract the custom error message thrown by server
+                  }
+              });
+
+          }
+
+</script>
+
+@*Scripts for Delete Expense -----------------------End*@
+
+@*Scripts for submitting the form -----------------------Start*@
+<script type="text/javascript">
+
+    $(function () {
+        $('form').submit(function () {
+            if ($(this).valid()) {
+                $.ajax({
+                    url: this.action,
+                    type: this.method,
+                    data: $(this).serialize(),
+                    success: function (result) {
+                        $('#myModal').modal('hide')
+                        $('#expenseDiv').html(result);
+                        $('#lblStatus').text("Report Has been Modified");
+                        
+                    }
+                });
+            }
+            return false;
+            $('#lblStatus').text("Error Updating Report!");
+            $('#myModal').modal('hide')
+        });
+    });
+
+    // click event that sets up the Expense Edit
+    $('body').on('click', '[id^=expenseLink]', function (event) {
+
+        //$('#btnAddEditClient').html("Update");
+        var selectedClientId = $(this).attr('data-ClientId');
+        var selectedClientName = $(this).attr('data-ClientName');
+        $('#txtClientName').val(selectedClientName);
+        $('#txtClientID').val(selectedClientId);
+        $('#lblStatus').text("")
+        // set up Expense for edit : 
+        var expenseDate = $(this).attr('data-ExpenseDate');
+        $('#ExpenseInput_DateIncurred').val(expenseDate)
+        var receipteEntery = $(this).attr('data-ReceipteEntry');
+        $('#ExpenseInput_ReceiptEntry').val(receipteEntery)
+        var establishment = $(this).attr('data-Establishment');
+        $('#ExpenseInput_Establishment').val(establishment)
+        var expenseCategory= $(this).attr('data-expenseCategory');
+        $('#ExpenseInput_Expensecategory').val(expenseCategory)
+        var NumberOfGuest = $(this).attr('data-NumberOfGuest');
+        $('#ExpenseInput_NumberOfGuest').val(NumberOfGuest)
+        var guestNames = $(this).attr('data-GuestNames');
+        $('#ExpenseInput_GuestNames').val(guestNames)
+        var expenseAmount = $(this).attr('data-ExpenseAmount');
+        $('#ExpenseInput_Amount').val(expenseAmount)
+        var amountPerGuest = $(this).attr('data-AmountPerGuest');
+        $('#ExpenseInput_AmountPerPerson').val(amountPerGuest)
+        var reason= $(this).attr('data-Reason');
+        $('#ExpenseInput_Reason').val(reason)
+        var notes= $(this).attr('data-Notes');
+        $('#ExpenseInput_Notes').val(notes)
+        var reportID= $(this).attr('data-ReportID');
+        $('#ExpenseInput_ReportID').val(reportID)
+        var ExpenseID = $(this).attr('data-ExpenseID');
+        $('#ExpenseInput_ExpenseID').val(ExpenseID)
+        
+        $('#myModal').modal('show')
+
+        //show Modal
+    });
+</script>
+@*Scripts for submitting the form -----------------------End*@

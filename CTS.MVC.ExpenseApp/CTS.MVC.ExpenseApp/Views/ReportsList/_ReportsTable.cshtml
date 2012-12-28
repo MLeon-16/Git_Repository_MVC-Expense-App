@@ -1,0 +1,81 @@
+﻿@model CTS.MVC.ExpenseApp.Models.ReportViewModel
+
+<div id="reportTable" class="centerContent">
+
+
+    <span>Click on "Report Date" to edit individual expenses, for each report.
+    </span>
+
+    <table class="centerContent">
+
+        <thead>
+
+            <tr>
+                <th>Report Date
+                </th>
+                <th>Project Name
+                </th>
+
+                <th>Employee Name
+                </th>
+                
+                <th>Total
+                </th>
+                <th>Expense Count</th>
+                <th>Billable
+                </th>
+                <th><span class="icon-pencil"></span><span>[Edit]</span></th>
+                <th><span class="icon-trash"></span><span>[Delete]</span></th>
+            </tr>
+            <tr>
+                <th colspan="8"></th>
+
+            </tr>
+        </thead>
+
+
+
+        @foreach (CTS.MVC.ExpenseApp.Models.ReportDetails rpt in Model.Reports)
+        {
+            <tr class="info ">
+
+                <td>@Html.ActionLink(@rpt.MonthYear.ToString("MMMM-yyyy"), "Index", "Report", new { reportID = rpt.ReportID }, null) </td>
+                <td>@rpt.ProjectName</td>
+                <td>@rpt.EmpName</td>
+                
+
+                <td>@rpt.Total.ToString("C")</td>
+                <td style="text-align:center" >@rpt.numberOfExpenses</td>
+                @if (@rpt.Billable)
+                {
+                    <td>&nbsp;&nbsp;&nbsp; <span class=" icon-thumbs-up"></span></td>
+                }
+                else
+                {
+                    <td></td>
+                }
+                <td><a id="btnEditReport"  
+                     data-ReportID="@rpt.ReportID" 
+                     data-ReportDate="@rpt.MonthYear.ToString("MM/yyyy")"
+                     data-Billable="@rpt.Billable.ToString()"
+                     data-EmployeeName ="@rpt.EmpName"
+                     data-EmployeeTitle="@rpt.EmpTitle"
+                     data-EmployeeNumber="@rpt.ErNumber"
+                     data-ProjectID="@rpt.ProjectID"
+                    data-Total ="@rpt.Total.ToString("C")"
+                     ><i class="icon-pencil"></i></a></td>
+                <td><a id="btnDeleteReport"   data-ReportID="@rpt.ReportID"  data-ReportDate="@rpt.MonthYear" ><i class="icon-trash"></i></a></td>
+
+
+
+            </tr>
+
+        }
+    </table>
+    <br />
+    <span id="lblStatus" class="alert "></span>
+</div>
+
+
+
+

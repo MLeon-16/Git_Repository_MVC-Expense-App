@@ -1,0 +1,173 @@
+﻿@model CTS.MVC.ExpenseApp.Models.ExpenseDetailsViewModel
+
+@using (Html.BeginForm("AddEditExpense", "Report"))
+{
+
+
+    <div class="row span10">
+        <hr />
+
+        <h3 class="offset5" id="lblTotal">Total: @Model.Report.Total.ToString("C")</h3>
+        <h5 class="offset5">Number of Expenses: @Model.Report.numberOfExpenses </h5>  
+
+        @{Html.RenderPartial("_ExpenseTable", Model);}
+
+        <!-- Button to trigger modal -->
+        <div class=" centerTable">
+            <span id="lblStatus" class="alert centerContent"></span>
+            <br />
+            <br />
+            <a href="#myModal" role="button" class="btn btn-info" onclick="showModal()">Create Expense</a>
+        </div>
+
+
+
+    </div>
+
+
+    <!-- Modal -->
+
+    <div id="myModal" style="max-height: 900px" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <h4 id="myModalLabel">Add/Edit Expense</h4>
+        </div>
+        <div class="modal-body">
+
+            <fieldset>
+
+                @Html.ValidationSummary(true)
+
+                <div class="editor-label">
+                    @Html.LabelFor(model => model.ExpenseInput.DateIncurred)
+                </div>
+                <div class="input-append date" id="txtDatepicker2" data-date="1-1-2013" data-date-format="mm-dd-yyyy" data-date-viewmode="0" data-date-minviewmode="0">
+
+                    @Html.TextBoxFor(model => model.ExpenseInput.DateIncurred, new { @class = "input-medium", value = "1-1-2013", @readonly = "readonly", placeholder = "Report Date..." })
+
+                    <span class="add-on"><i class="icon-th"></i></span>
+
+                </div>
+                @Html.ValidationMessageFor(model => model.ExpenseInput.DateIncurred)
+
+                <div class="editor-label">
+                    @Html.LabelFor(model => model.ExpenseInput.ReceiptEntry)
+                </div>
+                <div class="editor-field">
+                    @Html.EditorFor(model => model.ExpenseInput.ReceiptEntry)
+                    @Html.ValidationMessageFor(model => model.ExpenseInput.ReceiptEntry)
+                </div>
+
+                <span id="establishmentTxtWrapper" class="">
+
+
+                    @{Html.RenderPartial("_EstablishmentTxt", Model);}
+                </span>
+
+
+
+                @{
+                      // this is a select list used to populate the expense category 
+                      List<string> expenseCategory = new List<string>();
+                      expenseCategory.Add("Transportation");
+                      expenseCategory.Add("Food");
+                      expenseCategory.Add("Accommodation");
+                      expenseCategory.Add("Entertainment");
+                      expenseCategory.Add("Office expenses");
+                      expenseCategory.Add("Maintenance/Repairs");
+                      expenseCategory.Add("Salaries, wages, or benefits");
+                      expenseCategory.Add("--Other expenses--");
+
+                      SelectList mySelectList = new SelectList(expenseCategory);
+                }
+
+                <div class="editor-label">
+                    @Html.LabelFor(model => model.ExpenseInput.Expensecategory)
+                </div>
+                <div class="editor-field">
+                    @Html.DropDownListFor(model => model.ExpenseInput.Expensecategory, mySelectList, "--Expense Category--")
+                    @Html.ValidationMessageFor(model => model.ExpenseInput.Expensecategory)
+                </div>
+
+                <div class="editor-label">
+                    @Html.LabelFor(model => model.ExpenseInput.NumberOfGuest)
+                </div>
+                <div class="editor-field">
+                    @Html.EditorFor(model => model.ExpenseInput.NumberOfGuest, new { style = "width: 20px;" })
+                    @Html.ValidationMessageFor(model => model.ExpenseInput.NumberOfGuest)
+                </div>
+
+                <div class="editor-label">
+                    @Html.LabelFor(model => model.ExpenseInput.GuestNames)
+                </div>
+                <div class="editor-field">
+                    @Html.EditorFor(model => model.ExpenseInput.GuestNames)
+                    @Html.ValidationMessageFor(model => model.ExpenseInput.GuestNames)
+                </div>
+
+
+                <div class="editor-field">
+                    <div class="control-group">
+                        @Html.LabelFor(model => model.ExpenseInput.Amount, new { @class = "control-label" })
+                        <div class="controls">
+                            <span class="input-prepend">
+                                <span class="add-on">$</span>
+
+                                @Html.TextBoxFor(model => model.ExpenseInput.Amount, new { @class = "span2" })
+
+                            </span>
+                            @Html.ValidationMessageFor(model => model.ExpenseInput.Amount)
+                        </div>
+                    </div>
+                </div>
+
+
+
+                <div class="editor-field">
+                    <div class="control-group">
+                        @Html.LabelFor(model => model.ExpenseInput.AmountPerPerson, new { @class = "control-label" })
+                        <div class="controls">
+                            <div class="input-prepend">
+                                <span class="add-on">$</span>
+
+                                @Html.TextBoxFor(model => model.ExpenseInput.AmountPerPerson, new { @class = "span2", @readonly = "readonly" })
+
+                            </div>
+                            @Html.ValidationMessageFor(model => model.ExpenseInput.AmountPerPerson)
+                        </div>
+                    </div>
+                </div>
+
+                <div class="editor-label">
+                    @Html.LabelFor(model => model.ExpenseInput.Reason)
+                </div>
+                <div class="editor-field">
+                    @Html.TextAreaFor(model => model.ExpenseInput.Reason, new { rows = "3", placeholder = "Reason for incurred expense ..." })
+                    @Html.ValidationMessageFor(model => model.ExpenseInput.Reason)
+                </div>
+                <div class="editor-label">
+                    @Html.LabelFor(model => model.ExpenseInput.Notes)
+                </div>
+                <div class="editor-field">
+                    @Html.TextAreaFor(model => model.ExpenseInput.Notes, new { rows = "3", placeholder = "Notes of interest regarding expense  ..." })
+                    @Html.ValidationMessageFor(model => model.ExpenseInput.Notes)
+                </div>
+
+
+
+            </fieldset>
+        </div>
+        <div class="modal-footer">
+            <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+            <input type="submit" class="btn btn-primary" value="Save" />
+        </div>
+    </div>
+
+    @Html.HiddenFor(model => model.ExpenseInput.ExpenseID)
+    @Html.HiddenFor(model => model.ExpenseInput.ReportID)
+
+
+}
+
+

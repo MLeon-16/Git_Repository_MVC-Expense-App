@@ -1,0 +1,140 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="Expenses" Alias="Self" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns="http://schemas.microsoft.com/ado/2008/09/edm">
+  <EntityContainer Name="ExpensesContext" annotation:LazyLoadingEnabled="true">
+    <EntitySet Name="C__MigrationHistory" EntityType="Expenses.C__MigrationHistory" />
+    <EntitySet Name="Clients" EntityType="Expenses.Clients" />
+    <EntitySet Name="Establishments" EntityType="Expenses.Establishments" />
+    <EntitySet Name="ExpenseDetails" EntityType="Expenses.ExpenseDetails" />
+    <EntitySet Name="Projects" EntityType="Expenses.Projects" />
+    <EntitySet Name="Reports" EntityType="Expenses.Reports" />
+    <EntitySet Name="sysdiagrams" EntityType="Expenses.sysdiagrams" />
+    <AssociationSet Name="FK_dbo_Projects_dbo_Clients_ClientID" Association="Expenses.FK_dbo_Projects_dbo_Clients_ClientID">
+      <End Role="Clients" EntitySet="Clients" />
+      <End Role="Projects" EntitySet="Projects" />
+    </AssociationSet>
+    <AssociationSet Name="FK_dbo_ExpenseDetails_dbo_Reports_ReportId" Association="Expenses.FK_dbo_ExpenseDetails_dbo_Reports_ReportId">
+      <End Role="Reports" EntitySet="Reports" />
+      <End Role="ExpenseDetails" EntitySet="ExpenseDetails" />
+    </AssociationSet>
+    <AssociationSet Name="FK_dbo_Reports_dbo_Projects_ProjectID" Association="Expenses.FK_dbo_Reports_dbo_Projects_ProjectID">
+      <End Role="Projects" EntitySet="Projects" />
+      <End Role="Reports" EntitySet="Reports" />
+    </AssociationSet>
+  </EntityContainer>
+  <EntityType Name="C__MigrationHistory">
+    <Key>
+      <PropertyRef Name="MigrationId" />
+    </Key>
+    <Property Name="MigrationId" Type="String" Nullable="false" MaxLength="255" Unicode="true" FixedLength="false" />
+    <Property Name="Model" Type="Binary" Nullable="false" MaxLength="Max" FixedLength="false" />
+    <Property Name="ProductVersion" Type="String" Nullable="false" MaxLength="32" Unicode="true" FixedLength="false" />
+  </EntityType>
+  <EntityType Name="Clients">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="ClientName" Type="String" Nullable="false" MaxLength="200" Unicode="true" FixedLength="false" />
+    <NavigationProperty Name="Projects" Relationship="Expenses.FK_dbo_Projects_dbo_Clients_ClientID" FromRole="Clients" ToRole="Projects" />
+  </EntityType>
+  <EntityType Name="Establishments">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="EstablishmentName" Type="String" Nullable="false" MaxLength="200" Unicode="true" FixedLength="false" />
+  </EntityType>
+  <EntityType Name="ExpenseDetails">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="ReceiptEntry" Type="String" MaxLength="50" Unicode="true" FixedLength="false" />
+    <Property Name="DateIncurred" Type="DateTime" Nullable="false" />
+    <Property Name="NumberOfGuest" Type="Int32" Nullable="false" />
+    <Property Name="GuestNames" Type="String" MaxLength="500" Unicode="true" FixedLength="false" />
+    <Property Name="Extablishment" Type="String" Nullable="false" MaxLength="200" Unicode="true" FixedLength="false" />
+    <Property Name="Reason" Type="String" MaxLength="Max" Unicode="true" FixedLength="false" />
+    <Property Name="Expensecategory" Type="String" MaxLength="Max" Unicode="true" FixedLength="false" />
+    <Property Name="Amount" Type="Double" Nullable="false" />
+    <Property Name="AmountPerPerson" Type="Double" Nullable="false" />
+    <Property Name="ReportId" Type="Int32" Nullable="false" />
+    <NavigationProperty Name="Reports" Relationship="Expenses.FK_dbo_ExpenseDetails_dbo_Reports_ReportId" FromRole="ExpenseDetails" ToRole="Reports" />
+  </EntityType>
+  <EntityType Name="Projects">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="ClientId" Type="Int32" Nullable="false" />
+    <Property Name="ProjectName" Type="String" Nullable="false" MaxLength="200" Unicode="true" FixedLength="false" />
+    <NavigationProperty Name="Clients" Relationship="Expenses.FK_dbo_Projects_dbo_Clients_ClientID" FromRole="Projects" ToRole="Clients" />
+    <NavigationProperty Name="Reports" Relationship="Expenses.FK_dbo_Reports_dbo_Projects_ProjectID" FromRole="Projects" ToRole="Reports" />
+  </EntityType>
+  <EntityType Name="Reports">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="MonthYear" Type="DateTime" Nullable="false" />
+    <Property Name="ErNumber" Type="Int32" />
+    <Property Name="Billable" Type="Boolean" Nullable="false" />
+    <Property Name="EmpName" Type="String" Nullable="false" MaxLength="50" Unicode="true" FixedLength="false" />
+    <Property Name="EmpTitle" Type="String" Nullable="false" MaxLength="50" Unicode="true" FixedLength="false" />
+    <Property Name="ProjectID" Type="Int32" Nullable="false" />
+    <NavigationProperty Name="ExpenseDetails" Relationship="Expenses.FK_dbo_ExpenseDetails_dbo_Reports_ReportId" FromRole="Reports" ToRole="ExpenseDetails" />
+    <NavigationProperty Name="Projects" Relationship="Expenses.FK_dbo_Reports_dbo_Projects_ProjectID" FromRole="Reports" ToRole="Projects" />
+  </EntityType>
+  <EntityType Name="sysdiagrams">
+    <Key>
+      <PropertyRef Name="diagram_id" />
+    </Key>
+    <Property Name="name" Type="String" Nullable="false" MaxLength="128" Unicode="true" FixedLength="false" />
+    <Property Name="principal_id" Type="Int32" Nullable="false" />
+    <Property Name="diagram_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="version" Type="Int32" />
+    <Property Name="definition" Type="Binary" MaxLength="Max" FixedLength="false" />
+  </EntityType>
+  <Association Name="FK_dbo_Projects_dbo_Clients_ClientID">
+    <End Role="Clients" Type="Expenses.Clients" Multiplicity="1">
+      <OnDelete Action="Cascade" />
+    </End>
+    <End Role="Projects" Type="Expenses.Projects" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Clients">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Projects">
+        <PropertyRef Name="ClientId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_dbo_ExpenseDetails_dbo_Reports_ReportId">
+    <End Role="Reports" Type="Expenses.Reports" Multiplicity="1">
+      <OnDelete Action="Cascade" />
+    </End>
+    <End Role="ExpenseDetails" Type="Expenses.ExpenseDetails" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Reports">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="ExpenseDetails">
+        <PropertyRef Name="ReportId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_dbo_Reports_dbo_Projects_ProjectID">
+    <End Role="Projects" Type="Expenses.Projects" Multiplicity="1">
+      <OnDelete Action="Cascade" />
+    </End>
+    <End Role="Reports" Type="Expenses.Reports" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Projects">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Reports">
+        <PropertyRef Name="ProjectID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+</Schema>

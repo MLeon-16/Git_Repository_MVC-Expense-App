@@ -1,0 +1,11 @@
+﻿@model CTS.MVC.ExpenseApp.Models.ExpenseDetailsViewModel
+
+@*data-provide ="typeahead"*@
+
+    <label><b><u>Establishment</u></b> <font size="1">[w/ Auto Complete]</font> </label>
+
+@*<input spellcheck="true" data-val="true" data-provide="typeahead" data-items="4" data-val-length="The field Establishment must be a string with a maximum length of 200." data-val-length-max="200" data-val-required="The Establishment field is required." id="Establishment" name="Establishment" type="text" value="">*@
+@Html.TextBoxFor(m=> m.ExpenseInput.Establishment)
+@Html.ValidationMessageFor(model =>model.ExpenseInput.Establishment)
+
+<a id="btnAddEstablishment" onclick="addEstablishment()"><i class=" icon-plus"></i></a>(Add to Common Establishments)

@@ -1,0 +1,412 @@
+﻿@model List<CTS.MVC.ExpenseApp.Models.ClientViewModel>
+
+@{
+    ViewBag.Title = "Index";
+}
+<div class="row span10">
+    <h2>Client Management</h2>
+
+    <div class="centerContent row">
+        <span id="lblStatus" class="alert centerContent"></span>
+
+        <div class="table">
+
+            <h3>Client List</h3>
+            <span>click on client name to edit and list projects</span>
+            <table class="centerContent">
+                <tr>
+                    <td>
+                        <div id="clientTableWrapper">@{Html.RenderPartial("_ClientTable", Model);}</div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <input id="txtClientID" type="hidden" />
+
+                        <div class="input-append">
+                            <label class="centerContent">Client Name</label>
+                            <input id="txtClientName" type="text" placeholder="Client Name ..." />
+                            <button id="btnAddEditClient" class="btn btn-success" type="button">Add</button>
+                            <button class="btn btn-warning" id="btnCancelCleint">Cancel</button>
+
+                        </div>
+                    </td>
+
+                </tr>
+            </table>
+        </div>
+        <div>
+        </div>
+
+    </div>
+
+    <div class="centerContent row">
+        <div class="wellMLeon" id="toggleText" style="display: none">@*T<---------------------------This is the hidden DIV*@
+            <div class="progress">
+                <div class="bar" style="width: 100%;"></div>
+            </div>
+            <h4 id="lblProjectInfo"></h4>
+            <span id="lblStatus2" class="alert centerContent"></span>
+
+            <div id="projectTableWrapper">
+
+                @{Html.RenderPartial("_ProjectTable", Model);}
+            </div>
+            <div class="progress">
+                <div class="bar" style="width: 100%;"></div>
+            </div>
+        </div>
+
+
+    </div>
+
+</div>
+
+
+
+<script type="text/javascript">
+    //Java script ---------------------------------------------------------Start
+   $(document).ready(function () {
+        //rebindLinks();
+
+  
+
+
+   // function //rebindLinks() {// ---------------------------------------------------start rebind links
+
+        // click event that sets up the Client Edit, and shows the projects linked with a given client  
+    $('body').on('click', '[id^=clientLink]', function(event) { 
+ 
+            $('#btnAddEditClient').html("Update");
+            var selectedClientId = $(this).attr('data-ClientId');
+            var selectedClientName = $(this).attr('data-ClientName');
+            $('#txtClientName').val(selectedClientName);
+            $('#txtClientID').val(selectedClientId);
+            $('#lblStatus').text("")
+            txtClientName.focus();
+            // here we will load any projects associated with
+            //set up Projects section 
+            $('#lblProjectInfo').html("Projects for : " + selectedClientName)
+
+            getClientProjects(selectedClientId);
+            //show proejcts section 
+            showDiv()
+
+
+        });
+
+    // click event that resets page:
+    $('body').on('click', '#btnCancelCleint', function(event) { 
+            resetPage();
+        });
+
+    // click event that resets Project section:
+    $('body').on('click', '#btnCancelProject', function(event) { 
+            resetProjectSection();
+        });
+
+
+    // click event that handels add/edit 
+    $('body').on('click', '#btnAddEditClient', function(event) { 
+      
+            // validate input 
+            var inputValidation = validateText($('#txtClientName').val().trim());
+
+            if (inputValidation === false) {
+
+                $('#lblStatus').text("Please provide an Client Name!")
+                txtClientName.focus();
+
+            }
+            else// the input is valid 
+            {
+
+                // check to see if it is an add or and edit 
+                if ($('#txtClientID').val().length <= 0) {
+                    // here we add a new client 
+
+                    var clientName = $('#txtClientName').val().trim()
+                    addEditClient(0, clientName)// this function adds/updates a new client 
+                    $('#lblStatus').text("Client has been Added")
+                }
+                else {
+                    // Edit an Existing client 
+
+                    var clientName = $('#txtClientName').val().trim()
+                    var clientID = $('#txtClientID').val().trim()
+                    addEditClient(clientID, clientName)// this function adds/updates a new client 
+                    $('#btnAddEditClient').html("Add");
+                    $('#lblStatus').text("Client has been Updated")
+
+
+                }
+
+            }
+        });
+
+        //-------------------------------------------------------------------------------- Projects Actions : 
+    // this click event will set up project update
+    $('body').on('click', '[id^=projectLink]', function(event) { 
+      
+
+            $('#btnAddEditProject').html("Update");
+            var selectedProjectId = $(this).attr('data-ProjectId');
+            var selectedProjectName = $(this).attr('data-ProjectName');
+            $('#txtProjectName').val(selectedProjectName);
+            $('#txtProjectID').val(selectedProjectId);
+            txtProjectName.focus();
+        });
+
+    // click event that handels add/edit for Projects
+    $('body').on('click', '#btnAddEditProject', function(event) { 
+       
+            // validate input 
+            var inputValidation = validateText($('#txtProjectName').val().trim());
+
+            if (inputValidation === false) {
+
+                $('#lblStatus2').text("Please provide an project Name!")
+                txtProjectName.focus();
+
+            }
+            else// the input is valid 
+            {
+
+                // check to see if it is an add or and edit 
+                if ($('#txtProjectID').val().length <= 0) {
+                    // here we add a new client 
+
+                    var projectName = $('#txtProjectName').val().trim()
+                    var clientID = $('#txtClientID').val()
+                    addEditProject(clientID, 0, projectName)// this function adds/updates a new client 
+                    $('#lblStatus2').text("Project has been Added")
+                }
+                else {
+                    // Edit an Existing client 
+
+                    var projectName = $('#txtProjectName').val().trim()
+                    var clientID = $('#txtClientID').val().trim()
+                    var projectID = $('#txtProjectID').val()
+                    addEditProject(clientID, projectID, projectName)// this function adds/updates a new client 
+                    $('#btnAddEditProject').html("Add");
+                    $('#lblStatus2').text("Project has been Updated")
+
+
+                }
+
+            }
+        });
+
+    // click event for delete client 
+    $('body').on('click','[id^=btnDeleteClient]', function(event) { 
+       
+           
+            var selectedClientId = $(this).attr('data-ClientId');
+            var selectedClientName = $(this).attr('data-ClientName');
+            var confirmDelete = window.confirm("Remove: " + selectedClientName + "\n\n" +
+                "This will also remove all associated projects\n\n " +
+                "                 do you wish to continue ? ");
+            if (confirmDelete) {
+                // post to server and remove the Client
+                deleteClient(selectedClientId, selectedClientName);
+            }
+            else {
+                $('#lblStatus').text("delete has been canceled");
+            }
+
+        });
+    // click event for delete project
+    $('body').on('click','[id^=btnDeleteProject]', function(event) { 
+
+            var selectedProjectID = $(this).attr('data-ProjectID');
+            var selectedProjectName = $(this).attr('data-ProjectName');
+            var currentClientID = $('#txtClientID').val();
+
+            var confirmDelete = window.confirm("Remove project: " + selectedProjectName);
+
+            if (confirmDelete) {
+                deleteProject(selectedProjectID, currentClientID);
+
+                $('#lblStatus2').text(selectedProjectName + ", has been removed.");
+            }
+            else {
+                $('#lblStatus2').text("Remove project has been canceled.");
+
+            }
+
+
+        });
+        
+
+
+   // };// --------------------------------------------------------------------------End rebind links
+
+    function resetPage() {
+        $('#txtClientID').val("");
+        $('#txtClientName').val("");
+        $('#lblStatus').text("");
+        $('#btnAddEditClient').html("Add");
+        hideDiv();
+
+    }
+
+    function resetProjectSection() {
+        $('#txtProjectID').val("");
+        $('#txtProjectName').val("");
+        $('#lblStatus2').text("");
+        $('#btnAddEditProject').html("Add");
+
+    };
+
+    // validates textbox to be sure there is user input 
+    function validateText(stringToValidate) {
+        if (stringToValidate.length <= 0) {
+            meetsCritiria = false;
+        }
+        else {
+            meetsCritiria = true;
+        }
+        return meetsCritiria;
+    };
+
+    // this function does a call to the server to add/edit Client 
+    function addEditClient(clientID, clientName) {
+
+        $.ajax(
+               {
+                   type: "POST",
+                   url: '@Url.Action("AddEditClient", "Client")',
+                   data: { clientID: clientID, clientName: clientName },
+                   success: function (data) {
+                       // replace the table content with the partialview
+                       $('#clientTableWrapper').html(data);
+                       //rebindLinks();
+                       $('#txtClientName').val("");
+                   },
+                   error: function (xhr, status, error) {// here the Ajax post was unsccuessful
+
+                       DisplayError(xhr); /// this method will extract the custom error message thrown by server
+                   }
+               });
+    }
+
+    // this function does the call to server to add/Edit project 
+    function addEditProject(clientID, projectID, projectName) {
+        $.ajax(
+                   {
+                       type: "POST",
+                       url: '@Url.Action("AddEditProject", "Client")',
+                       data: { clientID: clientID, projectID: projectID, projectName: projectName },
+                       success: function (data) {
+                           // replace the table content with the partialview
+
+                           $('#projectTableWrapper').html(data);
+                           //rebindLinks();
+                           $('#txtProjectName').val("");
+                       },
+                       error: function (xhr, status, error) {// here the Ajax post was unsccuessful
+
+                           alert("error server side add/edit ")
+                           //DisplayError2(xhr); /// this method will extract the custom error message thrown by server
+                       }
+                   });
+    };
+
+
+
+           // this funcion makes a call to the server and returns a list of the clients's projects 
+           function getClientProjects(selectedClientId) {
+               $.ajax(
+                      {
+                          type: "POST",
+                          url: '@Url.Action("GetClientProjects", "Client")',
+                   data: { clientID: selectedClientId },
+                   success: function (data) {
+                       // replace the table content with the partialview
+                       $('#projectTableWrapper').html(data);
+                       //rebindLinks();
+                   },
+                   error: function (xhr, status, error) {// here the Ajax post was unsccuessful
+
+                      // DisplayError(xhr); /// this method will extract the custom error message thrown by server
+                   }
+               });
+           }
+
+    
+
+    // this funciton does the call to the server to delete Client 
+    function deleteClient(selectedClientId, selectedClientName) {
+        $.ajax(
+               {
+                   type: "POST",
+                   url: '@Url.Action("DeleteClient", "Client")',
+                   data: { clientID: selectedClientId },
+                   success: function (data) {
+                       // replace the table content with the partialview
+                       $('#clientTableWrapper').html(data);
+                       $('#lblStatus').text(selectedClientName + ", has been removed along with all linking projects");
+                       //rebindLinks();
+                   },
+                   error: function (xhr, status, error) {// here the Ajax post was unsccuessful
+
+                       DisplayError(xhr); /// this method will extract the custom error message thrown by server
+                   }
+               });
+    }
+
+    // this function does the call to the server to delete Project
+    function deleteProject(selectedProjectID, currentClientID) {
+        $.ajax(
+                    {
+                        type: "POST",
+                        url: '@Url.Action("DeleteProject", "Client")',
+                        data: { ProjectID: selectedProjectID, ClientID: currentClientID },
+                        success: function (data) { // replace the table content with the partialview
+                            $('#projectTableWrapper').html(data);
+                            //rebindLinks();
+                        },
+                        error: function (data) { alert("error while removing Project") }
+
+
+
+                    });
+
+
+    }
+
+    // This function is used to display the projects section  
+    function showDiv() {
+        var ele = document.getElementById("toggleText");
+
+        if (ele.style.display != "block") {
+
+            ele.style.display = "block";
+        }
+    }
+    // This function is used to hide the projects section  
+    function hideDiv() {
+        var ele = document.getElementById("toggleText");
+
+        if (ele.style.display == "block") {
+
+            ele.style.display = "none";
+        }
+    }
+
+    // This function is used to display the custom error message thrown from the server 
+    function DisplayError(xhr) {
+
+        var msg = JSON.parse(xhr.responseText);
+        $('#lblStatus').text(msg.Message)
+
+    }
+    function DisplayError2(xhr) {
+
+        var msg = JSON.parse(xhr.responseText);
+        $('#lblStatus2').text(msg.Message)
+
+    }
+    }); //--------------------------------------------------------- End doc ready function 
+    // Java script ---------------------------------------------------------------End
+</script>

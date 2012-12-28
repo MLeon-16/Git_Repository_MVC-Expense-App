@@ -1,0 +1,12 @@
+C:\Users\mleon\Documents\Visual Studio 2012\Projects\CTS.MVC.ExpenseApp\CTS.Expense.Business\bin\Debug\CTS.Expense.Business.dll.config
+C:\Users\mleon\Documents\Visual Studio 2012\Projects\CTS.MVC.ExpenseApp\CTS.Expense.Business\bin\Debug\CTS.Expense.Business.dll
+C:\Users\mleon\Documents\Visual Studio 2012\Projects\CTS.MVC.ExpenseApp\CTS.Expense.Business\bin\Debug\CTS.Expense.Business.pdb
+C:\Users\mleon\Documents\Visual Studio 2012\Projects\CTS.MVC.ExpenseApp\CTS.Expense.Business\bin\Debug\CTS.Expense.Domain.dll
+C:\Users\mleon\Documents\Visual Studio 2012\Projects\CTS.MVC.ExpenseApp\CTS.Expense.Business\bin\Debug\EntityFramework.dll
+C:\Users\mleon\Documents\Visual Studio 2012\Projects\CTS.MVC.ExpenseApp\CTS.Expense.Business\bin\Debug\CTS.Expense.Domain.pdb
+C:\Users\mleon\Documents\Visual Studio 2012\Projects\CTS.MVC.ExpenseApp\CTS.Expense.Business\bin\Debug\EntityFramework.xml
+C:\Users\mleon\Documents\Visual Studio 2012\Projects\CTS.MVC.ExpenseApp\CTS.Expense.Business\obj\Debug\CTS.Expense.Business.csprojResolveAssemblyReference.cache
+C:\Users\mleon\Documents\Visual Studio 2012\Projects\CTS.MVC.ExpenseApp\CTS.Expense.Business\obj\Debug\CTS.Expense.Business.Migrations.InitialCreate.resources
+C:\Users\mleon\Documents\Visual Studio 2012\Projects\CTS.MVC.ExpenseApp\CTS.Expense.Business\obj\Debug\CTS.Expense.Business.csproj.GenerateResource.Cache
+C:\Users\mleon\Documents\Visual Studio 2012\Projects\CTS.MVC.ExpenseApp\CTS.Expense.Business\obj\Debug\CTS.Expense.Business.dll
+C:\Users\mleon\Documents\Visual Studio 2012\Projects\CTS.MVC.ExpenseApp\CTS.Expense.Business\obj\Debug\CTS.Expense.Business.pdb

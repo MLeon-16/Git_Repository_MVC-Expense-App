@@ -1,0 +1,15 @@
+﻿@model List<CTS.MVC.ExpenseApp.Models.ClientViewModel>
+
+<table class="centerContent">
+    @foreach (CTS.MVC.ExpenseApp.Models.ClientViewModel client in Model)
+    {
+        <tr class="info">
+            <td><a id="clientLink" data-ClientId="@client.ClientId" data-ClientName="@client.ClientName">@client.ClientName</a></td>
+             <td>
+                 <a id="btnDeleteClient"  data-ClientId="@client.ClientId" data-ClientName="@client.ClientName"><i class="icon-trash"></i></a>
+            </td>
+        </tr>
+        
+    }
+</table>
+

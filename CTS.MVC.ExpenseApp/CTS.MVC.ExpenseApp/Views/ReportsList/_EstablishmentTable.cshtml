@@ -1,0 +1,27 @@
+﻿@model CTS.MVC.ExpenseApp.Models.EstablishmentViewModel
+
+
+
+
+
+    <table class="centerContent">
+         @foreach (CTS.MVC.ExpenseApp.Models.EstablishmentDetails est in Model.Establishments)
+            { 
+                <tr class="info">
+
+
+                    <td> 
+                        
+                        <a id="establishmentLink" data-EstablishmentName="@est.EstablishmentName" data-EstablishmentID="@est.Id" >@est.EstablishmentName</a>
+
+                    </td>
+                    <td>
+                        <a id="btnDeleteEstablishment"   data-EstablishmentName="@est.EstablishmentName" data-EstablishmentID="@est.Id"><i class="icon-trash"></i></a>
+                    </td>
+
+                </tr>
+            }
+
+
+    </table>
+

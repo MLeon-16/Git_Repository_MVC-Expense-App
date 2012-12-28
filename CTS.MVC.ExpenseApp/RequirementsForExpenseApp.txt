@@ -1,0 +1,10 @@
+10/30/2012	
+Brief requirements for MVC expense App -
+	- Be able to view expenses reports that list total 
+	- Be able to add edit delete expense reports 
+	- Add expenses to a specific expense report 
+	- edit and delete expenses 
+	- View list of individual expenses of a expense report 
+	- Manage look up list fro projects 
+	- Add, edit, delete projects 
+	- display confirmation box before any delete 

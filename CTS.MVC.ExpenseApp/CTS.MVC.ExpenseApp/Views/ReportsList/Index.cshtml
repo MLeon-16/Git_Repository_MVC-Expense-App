@@ -1,0 +1,593 @@
+﻿@{
+    ViewBag.Title = "Index";
+}
+
+@model CTS.MVC.ExpenseApp.Models.ReportViewModel
+@*these are the links for the BS date picker, JS date picker had a conflict with the CSS*@
+<link href="~/Content/datepicker.css" rel="stylesheet" />
+<script src="~/Scripts/bootstrap-datepicker.js"></script>
+@*<script src="http://localhost:51999/Scripts/jquery.validate.min.js"></script>*@
+
+<script type="text/javascript">
+
+    $(function () {
+        $('#txtDatepicker').datepicker()
+    });
+
+
+
+
+</script>
+
+<div class="row span10">
+    <h2>List of Expense Reports </h2>
+
+    <div id="reportsWrapper" class=" row centerContent table">
+
+        @{Html.RenderPartial("_ReportsTable", Model);}
+
+    </div>
+
+    @using (Html.BeginForm("ReportList", "AddEditReport", FormMethod.Post, new { id = "myForm" }))
+    {
+        <div class="well row offset1">
+
+
+
+            @Html.ValidationSummary(true, "Unsuccessfull Add/Edit. Please correct the errors!")
+
+
+
+
+            <input class="errorBox" data-val="true" data-val-number="The field ReportID must be a number." data-val-required="The ReportID field is required." id="ReportID" name="ReportID" type="hidden" value="15">
+            <input type="hidden" id="currentReportTotal" name="currentReportTotal" />
+            <div class="form-inline">
+                <div class="control-group">
+                    <label class="control-lable" for="MonthYear" style="width: 150px">Report Month/Year :</label>
+
+                    <div class="input-append date" id="txtDatepicker" data-date="12-2012" data-date-format="mm-yyyy" data-date-viewmode="1" data-date-minviewmode="1">
+
+                        @Html.TextBoxFor(model => model.MonthYearInput, new { @class = "input-medium", value = "12-2012", @readonly = "readonly", placeholder = "Report Date..." })
+
+                        <span class="add-on"><i class="icon-th"></i></span>
+
+                    </div>
+
+
+
+                </div>
+                <label class="checkbox">
+                    @*<input type="checkbox" id="BillableInput" name="BillableInput">*@
+                    @Html.CheckBoxFor(m => m.BillableInput)
+                    -Billable
+                </label>
+
+            </div>
+            <br />
+            <div class="form-inline">
+                <label>Employee Name:</label>
+
+                @Html.TextBoxFor(model => model.EmpNameInput, new { @class = "input-medium", placeholder = "Employee Name..." })
+
+                @{Html.RenderPartial("_EmployeeTitles", Model);}
+                <label>Employee Number:</label>
+                @Html.TextBoxFor(m => m.ErNumberInput, new { @class = "input-small", placeholder = "Employee #..." })
+
+            </div>
+            <br />
+
+
+
+
+            <div id="projectDDLWrapper" class="form-inline">
+                @{Html.RenderPartial("_ProjectDDL", Model);}
+
+
+            </div>
+
+
+
+            <br />
+            <div class="form-inline offset4 ">
+                <button id="btnAddEdit" class="btn btn-success" type="button" onclick="addEditReport()">Add</button>
+                @*<input type="submit" class="btn btn-success" value="Add" />*@
+                &nbsp;
+                <button id="btnCancel" class="btn btn-warning" type="button">Cancel</button>
+
+
+            </div>
+            <br />
+            <div class=" offset3" id="errorSummary">
+            </div>
+
+        </div>
+    }
+    <!-- Button to trigger modal -->
+    @*<a href="#myModal" role="button" class="btn" data-toggle="modal">Launch demo modal</a>*@
+
+    <!-- Modal -->
+    <div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <h3 id="myModalLabel">Confirm Report Details  </h3>
+        </div>
+        <div class="modal-body form-inline" id="modelBody">
+            <p id="lblAddEdit"></p>
+            <p id="lblBillable"></p>
+
+            <p id="lblReportDate"></p>
+            <p id="lblEmpName"></p>
+            <p id="lblEmpTitle"></p>
+            <p id="lblEmpNumber"></p>
+            <p id="lblClient"></p>
+            <p id="lblProject"></p>
+            <br />
+            <p>Total : <strong id="lblTotal">$0.o</strong></p>
+
+
+
+        </div>
+        <div class="modal-footer">
+            <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+            <button class="btn btn-primary" onclick="saveReport()">Save changes</button>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+<script type="text/javascript">
+
+    $('#MonthYearInput').val("Report Month/Year --->")
+    $('#ReportID').val(-1)
+    $('#ddlProject').attr("disabled", "disabled");// this is to dissable the DDL 
+    // this function loads the projects based on what client is selected 
+    function loadProjects() {
+
+        // if no client is selected clear Projects DDL
+
+        if ($("#ddlClient").prop("selectedIndex") <= 0) {
+
+            $('#ddlProject').attr("disabled", "disabled");// this is to dissable the DDL 
+            $('#ddlProject').val('0');
+
+
+        }
+
+        else {
+
+            $('#ddlProject').removeAttr('disabled')// this is to enable the DDL
+
+            var selectedClientID = $('#ddlClient').val()
+            var selectedClientName = $("#ddlClient option:selected").text()
+
+            // if a client is not selected then do not post send error message
+
+            // when the client is selected display the projects assossiated with client
+
+            $.ajax(
+                  {
+                      type: "POST",
+                      url: '@Url.Action("GetProjects", "ReportsList")',
+                      data: { clientID: selectedClientID },
+                      success: function (data) {
+                          // replace the table content with the partialview
+                          $('#projectDDLWrapper').html(data);
+                          showDiv("ddlProject")
+
+                      },
+                      error: function (xhr, status, error) {// here the Ajax post was unsccuessful
+                          alert("something broke server side ")
+                          // DisplayError(xhr); /// this method will extract the custom error message thrown by server
+                      }
+                  });
+
+              }
+
+          }
+
+          // this action handles the Ajaxt post to add or edit a report
+          function addEditReport() {
+
+              // First we need to validate the form need to see if it is an add or and edit 
+
+              var formValid = validateForm()
+              if (formValid) {
+                  // set up Model to display all the report details :
+
+
+                  $('#myModal').modal('toggle') // this shows the bootStrap Modal
+
+
+
+                  // now we set up all the values of each of the detail lables ;
+                  if ($('#ReportID').val() > 0) {
+                      // "this is an edit "
+                      $('#lblAddEdit').text("Updating an Existing Report ")
+                  }
+                  else {
+
+                      $('#lblAddEdit').text("Creating a New Report")
+                  }
+
+                  var billable = $('#BillableInput').val()
+                  if (billable == "False") {
+
+                      $('#lblBillable').text("- Report is billable");
+                  }
+                  else {
+                      $('#lblBillable').text("- Report is not billable");
+                  }
+
+                  
+                  $('#lblEmpName').text('- Employee Name : ' + $('#EmpNameInput').val());
+                  $('#lblEmpTitle').text('-Employee Title : '+$('#EmpTitleInput').val());
+
+                 
+                  $('#lblReportDate').text('- Report Month/Year : '+$('#MonthYearInput').val());
+
+                  if ($('#ErNumberInput').val().length > 0) {// if there is an EMp number display it 
+                      $('#lblEmpNumber').text('- Employee Number : '+$('#ErNumberInput').val());
+                  }
+
+                  $('#lblClient').text('- Project Client : '+ $('#ddlClient option:selected').text()); // this gets the text value of the selected index 
+
+                  $('#lblProject').text('- Project : '+$('#ddlProject option:selected').text());
+
+                  $('#lblTotal').text($('#currentReportTotal').val());
+
+                  // now it is up to the user to confirm the save or edit the fields  
+
+              }
+
+              
+
+          }
+
+          function saveReport() {
+              $.ajax({
+                  url: '@Url.Action("AddEditReport", "ReportsList")',
+                  type: 'post',
+                  data: $('#myForm').serialize(),
+                  success: function (result) {
+
+                      $('#reportsWrapper').html(result);
+                      resetPage();
+                      $('#myModal').modal('hide')
+                      $('#lblStatus').text("Add/Edit was successful.");
+
+                  },
+                  error: function (xhr, status, error) {// here the Ajax post was unsccuessful
+                      alert("This cant be good \n something broke server side");
+                      // DisplayError(xhr); /// this method will extract the custom error message thrown by server
+                  }
+              });
+
+          }
+    // resets page 
+    $('body').on('click', '[id^=btnCancel]', function (event) { 
+          ///function cancel() {
+
+              // reset all elemets in the form : 
+              resetPage();
+              $('#lblStatus').text("Fields have been cleared.")
+
+
+          //}
+    });
+
+
+          function resetPage() {
+              // remove Css error class from all the controls 
+              //hideDiv("errorSummary")
+              $('#errorSummary p').remove()
+
+              $('#ddlProject').removeClass('errorBox');
+              $('#ddlClient').removeClass('errorBox');
+              $('#EmpTitleInput').removeClass('errorBox');
+              $('#EmpNameInput').removeClass('errorBox');
+              $('#MonthYearInput').removeClass('errorBox');
+
+              // uncheck boxes 
+              $('#BillableInput').prop('checked', false);
+
+              // selects 0 index for the DDL 
+              $("#ddlClient").val('0');
+              $('#ddlProject').val('0');
+              $('#EmpTitleInput').val('0')
+
+              //disable project DDL 
+              $('#ddlProject').attr("disabled", "disabled");// this is to dissable the DDL 
+
+              // reset date picker 
+              $('#MonthYearInput').val("Report Month/Year --->")
+
+
+
+              // reset report ID hidden field and text boxes 
+              $('#ReportID').val(-1)
+              $('#EmpNameInput').val("")
+              $('#ErNumberInput').val("")
+
+              // reset button text 
+              $('#btnAddEdit').text('Add')
+
+              // clear status lable-  done out of the page reset in case custom message is needed to dispaly
+              //$('#lblStatus').val("")
+          }
+
+          // This function is used to display a given section  
+          function showDiv(divID) {
+              var ele = document.getElementById(divID);
+
+              if (ele.style.display != "block") {
+
+                  ele.style.display = "block";
+              }
+          }
+
+          // This function is used to hide a given section 
+          function hideDiv() {
+              var ele = document.getElementById(divID);
+
+              if (ele.style.display == "block") {
+
+                  ele.style.display = "none";
+              }
+          }
+          // this function is used to validate the form entries, and return any errors    
+          function validateForm() {
+              // check the Req fields to see if in correct format 
+              // when not in the required formate $(‘#para1′).addClass(‘errorBox’)
+              // else $(‘#para1′).removeClass(‘errorBox’)
+              // ^\d{1,2}[-/]\d{4}
+              var formValid = true;
+              $('#errorSummary p').remove()
+
+
+
+              // validate date 
+
+              // var dateRegEX = RegExp('^\d{1,2}[-/]\d{4}');// note could not get \d to detect digits so used [1-9]
+              var dateRegEX = RegExp('[0-9]{1,2}[-/][0-9]{4}');
+              var dateValid = dateRegEX.test($("#MonthYearInput").val());
+
+              if (dateValid == false) {
+                  // change the back ground color of the text box : 
+                  $('#MonthYearInput').addClass('errorBox');
+                  formValid = false;
+                  $('#errorSummary').append('<p>-    Select a month and year for report\n\n </p>');
+              }
+              else {
+                  $('#MonthYearInput').removeClass('errorBox');
+              }
+
+              // validate EmployeeDate:
+              if ($('#EmpNameInput').val().length <= 0) {
+                  $('#EmpNameInput').addClass('errorBox');
+                  formValid = false;
+                  $('#errorSummary').append('<p>-    provided an employee name  for report\n\n </p>');
+
+              }
+              else {
+                  $('#EmpNameInput').removeClass('errorBox');
+              }
+
+              // validate Employee Title 
+
+              if ($("#EmpTitleInput").prop("selectedIndex") <= 0) {
+                  $('#EmpTitleInput').addClass('errorBox');
+                  formValid = false;
+                  $('#errorSummary').append('<p>-    select an employee title  for report\n\n </p>');
+
+
+              }
+              else {
+                  $('#EmpTitleInput').removeClass('errorBox');
+
+              }
+
+              // validate Emp Number 
+              if ($('#ErNumberInput').val().length > 0) {
+
+                  // if this does have an input be sure it is numeric 
+                  var EmpNumRegEX = RegExp('[0-9]+');
+                  var empNumValid = EmpNumRegEX.test($("#ErNumberInput").val());
+
+                  if (empNumValid == false) {
+                      $('#ErNumberInput').addClass('errorBox');
+                      formValid = false;
+                      $('#errorSummary').append('<p>-    Employee number needs to be numeric \n\n </p>');
+
+                  }
+                  else {
+                      $('#ErNumberInput').removeClass('errorBox');
+                  }
+              }
+              else {
+                  $('#ErNumberInput').removeClass('errorBox');
+              }
+
+              // validate Client DDL :
+              if ($("#ddlClient").prop("selectedIndex") <= 0) {
+                  $('#ddlClient').addClass('errorBox');
+                  formValid = false;
+                  $('#errorSummary').append('<p>-    select an Client for report\n\n </p>');
+
+
+              }
+              else {
+                  $('#ddlClient').removeClass('errorBox');
+
+              }
+              // validate project DDL:
+
+              if ($("#ddlProject").prop("selectedIndex") <= 0) {
+                  $('#ddlProject').addClass('errorBox');
+                  formValid = false;
+                  $('#errorSummary').append('<p>-    select an project for report\n\n </p>');
+
+
+              }
+              else {
+                  $('#ddlProject').removeClass('errorBox');
+
+              }
+
+
+              if (formValid == true) {
+
+                  return true;
+                  //hideDiv("errorSummary")
+                  $('#errorSummary p').remove()
+              }
+              else {
+                  return false
+
+                  showDiv("errorSummary");
+
+              }
+
+
+
+
+
+
+          }
+
+
+
+</script>
+
+@*Holds the methods to set up a report for Edit -------------------------------------------------- *@
+<script type="text/javascript">
+    $('body').on('click', '[id^=btnEditReport]', function (event) {
+        // this type of alert can be used in case the user has not selected a value 
+        // alert($('#EmpTitleInput').val().length)
+        resetPage()
+        $('#btnAddEdit').text('Update');
+        var selectedReportId = $(this).attr('data-ReportID');
+        var reportDate = $(this).attr('data-ReportDate');
+        var projectID = $(this).attr('data-ProjectID')
+        var billable = $(this).attr('data-Billable');
+        var empName = $(this).attr('data-EmployeeName');
+        var empTitle = $(this).attr('data-EmployeeTitle');
+        var empNumber = $(this).attr('data-EmployeeNumber');
+        var currentReportTotal = $(this).attr('data-Total');
+
+
+        // set the values of each text box :
+        $('#ReportID').val(selectedReportId)
+        $('#MonthYearInput').val(reportDate)
+        $('#EmpNameInput').val(empName)
+        $('#ErNumberInput').val(empNumber)
+        $('#currentReportTotal').val(currentReportTotal)
+        // this if sets sets the checkbox of billable  
+        if (billable == "False") {
+            $('#BillableInput').prop('checked', false);
+        }
+        else {
+            $('#BillableInput').prop('checked', true);
+        }
+
+        // set the value of position 
+        $("#EmpTitleInput").val(empTitle)// set the value of the emp title Drop down list, 
+        //since this list is only made up of values and no keys you are able set the value by just supplying a sting that the list contains 
+
+
+        // need to set the client ID and the project Id based on the report selected 
+        $.ajax(
+             {
+                 type: "POST",
+                 url: '@Url.Action("GetReportDetailsForEdit", "ReportsList")',
+                 data: { projectID: projectID },
+                 success: function (data) {
+                     {
+
+
+                     }
+                     // replace the table content with the partialview
+                     $('#projectDDLWrapper').html(data);
+
+                     
+                     $('#ddlProject').removeAttr('disabled')// this is to enable the DDL
+
+                     $('#lblStatus').text(" Report, has been set up for Edit.");
+                     //rebindLinks();
+                 },
+                 error: function (xhr, status, error) {// here the Ajax post was unsccuessful
+
+                     alert("Wahoooo something broke server side ")
+                 }
+             });
+
+
+
+
+        //// this alert returns 
+        //alert(document.getElementById("EmpTitleInput").options[document.getElementById("EmpTitleInput").selectedIndex].text)
+        // using the projectId need to get the related cleint may need to do an Ajax post  
+    });
+
+
+</script>
+
+
+
+
+
+
+
+@*Holds the methods to remove a report -------------------------------------------------- *@
+<script type="text/javascript">
+
+    // click event for delete client 
+    $('body').on('click', '[id^=btnDeleteReport]', function (event) {
+
+
+        var selectedReportId = $(this).attr('data-ReportID');
+
+
+        var confirmDelete = window.confirm("Remove selected report  \n\n" +
+            "Note:This will also remove all realted expense entries\n\n " +
+            "Do you wish to continue ? ");
+        if (confirmDelete) {
+            // post to server and remove the Report 
+            deleteReport(selectedReportId);
+
+        }
+        else {
+            $('#lblStatus').text("delete has been canceled");
+        }
+
+    });
+
+    // post to server to delete Report from DB
+    function deleteReport(selectedReportID) {
+
+        $.ajax(
+             {
+                 type: "POST",
+                 url: '@Url.Action("DeleteReport", "ReportsList")',
+                 data: { ReportID: selectedReportID },
+                 success: function (data) {
+                     // replace the table content with the partialview
+                     $('#reportsWrapper').html(data);
+                     resetPage();
+                     $('#lblStatus').text(" Report, and related expenses have been removed");
+                     //rebindLinks();
+                 },
+                 error: function (xhr, status, error) {// here the Ajax post was unsccuessful
+
+                     alert("Wahoooo something broke server side ")
+                 }
+             });
+
+         };
+
+
+</script>

@@ -1,0 +1,72 @@
+﻿@model CTS.MVC.ExpenseApp.Models.ExpenseDetailsViewModel
+
+@{
+    if (Model.ListOfExpenses.Count <= 0)
+    {// this report has no expeses display somehting else 
+    <div class="centerContent">
+        <h4 class="info Bold">There are no expenses registered on this report </h4>
+
+    </div>
+      
+    }
+    else
+    {
+    <div class="table">
+        <table class="centerTable">
+           
+             <thead>
+                <tr  >
+                    <td colspan="8"> <i class="icon-hand-down"></i>To edit click on expense number </td>
+
+                </tr>
+                <tr>
+                    <td></td>
+                    <th>Establishment</th>
+                    <th>Date Incurred</th>
+                    <th>Expense Category</th>
+                    <th># of Guest</th>
+                    <th>Amount/Guest</th>
+                    <th>Amount</th>
+                    <th><span class="icon-trash"></span>[Delete]</th>
+                </tr>
+
+            </thead>
+            @{int expesneCount = 0;}
+            @foreach (CTS.MVC.ExpenseApp.Models.ExpenseDetails expense in Model.ListOfExpenses)
+            { 
+                expesneCount ++;
+                <tr class="info">
+                    <th><a
+                        id="expenseLink"
+                        data-ExpenseDate="@expense.DateIncurred"
+                        data-ReceipteEntry="@expense.ReceiptEntry"
+                        data-Establishment="@expense.Establishment"
+                        data-ExpenseCategory="@expense.Expensecategory"
+                        data-NumberOfGuest="@expense.NumberOfGuest"
+                        data-GuestNames="@expense.GuestNames"
+                        data-ExpenseAmount="@expense.Amount"
+                        data-AmountPerGuest="@expense.AmountPerPerson"
+                        data-Reason="@expense.Reason"
+                        data-Notes="@expense.Notes"
+                        data-ReportID="@expense.ReportID"
+                        data-ExpenseID="@expense.ExpenseID"
+                        
+                        >@expesneCount</a></th>
+                    <td>@expense.Establishment</td>
+                    <td>@expense.DateIncurred.ToString("MMM/dd/yyyy")</td>
+                    <td>@expense.Expensecategory</td>
+                    <td>@expense.NumberOfGuest</td>
+                    <td>@expense.AmountPerPerson.ToString("C")</td>
+                    <td>@expense.Amount.ToString("C")</td>
+                    <td><a id="linkDeleteExpense" class="icon-trash" data-expenseID="@expense.ExpenseID" data-reportID="@expense.ReportID"></a></td>
+
+                </tr>
+            }
+        </table>
+    </div>
+    
+  
+    }
+    
+    
+}

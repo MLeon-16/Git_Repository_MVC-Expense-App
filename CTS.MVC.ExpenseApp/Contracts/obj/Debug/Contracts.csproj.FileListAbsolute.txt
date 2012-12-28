@@ -1,0 +1,7 @@
+C:\Users\mleon\Documents\Visual Studio 2012\Projects\CTS.MVC.ExpenseApp\Contracts\bin\Debug\Contracts.dll
+C:\Users\mleon\Documents\Visual Studio 2012\Projects\CTS.MVC.ExpenseApp\Contracts\bin\Debug\Contracts.pdb
+C:\Users\mleon\Documents\Visual Studio 2012\Projects\CTS.MVC.ExpenseApp\Contracts\bin\Debug\CTS.Expense.Domain.dll
+C:\Users\mleon\Documents\Visual Studio 2012\Projects\CTS.MVC.ExpenseApp\Contracts\bin\Debug\CTS.Expense.Domain.pdb
+C:\Users\mleon\Documents\Visual Studio 2012\Projects\CTS.MVC.ExpenseApp\Contracts\obj\Debug\Contracts.csprojResolveAssemblyReference.cache
+C:\Users\mleon\Documents\Visual Studio 2012\Projects\CTS.MVC.ExpenseApp\Contracts\obj\Debug\Contracts.dll
+C:\Users\mleon\Documents\Visual Studio 2012\Projects\CTS.MVC.ExpenseApp\Contracts\obj\Debug\Contracts.pdb

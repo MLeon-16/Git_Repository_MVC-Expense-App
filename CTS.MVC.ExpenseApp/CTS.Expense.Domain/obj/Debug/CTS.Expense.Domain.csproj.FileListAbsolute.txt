@@ -1,0 +1,4 @@
+C:\Users\mleon\Documents\Visual Studio 2012\Projects\CTS.MVC.ExpenseApp\CTS.Expense.Domain\bin\Debug\CTS.Expense.Domain.dll
+C:\Users\mleon\Documents\Visual Studio 2012\Projects\CTS.MVC.ExpenseApp\CTS.Expense.Domain\bin\Debug\CTS.Expense.Domain.pdb
+C:\Users\mleon\Documents\Visual Studio 2012\Projects\CTS.MVC.ExpenseApp\CTS.Expense.Domain\obj\Debug\CTS.Expense.Domain.dll
+C:\Users\mleon\Documents\Visual Studio 2012\Projects\CTS.MVC.ExpenseApp\CTS.Expense.Domain\obj\Debug\CTS.Expense.Domain.pdb
